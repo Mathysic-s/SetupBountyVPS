@@ -196,8 +196,8 @@ log "Instalando pacotes básicos..."
 apt install -y iptables-persistent net-tools python3 python3-pip openssl
 
 log "Instalando Golang..."
-wget -q https://go.dev/dl/go1.25.0.linux-amd64.tar.gz
-rm -rf /usr/local/go && tar -C /usr/local -xzf go1.25.0.linux-amd64.tar.gz
+wget -q https://go.dev/dl/go1.24.6.linux-amd64.tar.gz
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.24.6.linux-amd64.tar.gz
 echo "export PATH=\$PATH:/usr/local/go/bin" >> /etc/profile
 echo "export PATH=\$PATH:\$HOME/go/bin" >> /etc/profile
 echo "export PATH=\$PATH:/usr/local/go/bin" >> $HOME/.profile
@@ -220,6 +220,7 @@ EOF
 log "Install Nuclei..."
 go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 log "Adicionando notify para Update do Nuclei..."
+nuclei -update-templates
 echo "59 10 * * * nuclei -update-templates ; echo 'Nuclei Atualizado' | notify >/dev/null 2>&1 >/dev/null 2>&1" > /etc/cron.d/updateNuclei_templates
 
 log "Instalando Docker..."
@@ -243,7 +244,7 @@ sudo docker run hello-world
 
 log "Instalando Portainer..."
 docker volume create portainer_data
-docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
+docker run -d -p 127.0.0.1:8000:8000 -p 127.0.0.1:9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
 
 log "Instalando Nginx..."
 apt install -y nginx
